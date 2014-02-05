@@ -9,7 +9,8 @@
 // Usage:
 //
 //   cd install
-//   php cli_install.php install --db_host localhost \
+//   php cli_install.php install --db_driver mysql \
+//								 --db_host localhost \
 //                               --db_user root \
 //                               --db_password pass \
 //                               --db_name opencart \
@@ -58,7 +59,8 @@ function usage() {
 	echo "Usage:\n";
 	echo "======\n";
 	echo "\n";
-	$options = implode(" ", array('--db_host', 'localhost',
+	$options = implode(" ", array('--db_driver', 'mysql',
+								  '--db_host', 'localhost',
 								  '--db_user', 'root',
 								  '--db_password', 'pass',
 								  '--db_name', 'opencart',
@@ -73,6 +75,7 @@ function usage() {
 
 function get_options($argv) {
 	$defaults = array(
+		'db_driver' => 'mysql',
 		'db_host' => 'localhost',
 		'db_name' => 'opencart',
 		'db_prefix' => '',
@@ -95,6 +98,7 @@ function get_options($argv) {
 
 function valid($options) {
 	$required = array(
+		'db_driver',
 		'db_host',
 		'db_user',
 		'db_password',
@@ -207,7 +211,7 @@ function setup_mysql($dbdata) {
 	global $loader, $registry;
 	$loader->model('install');
 	$model = $registry->get('model_install');
-	$model->mysql($dbdata);
+	$model->database($dbdata);
 }
 
 
@@ -235,7 +239,7 @@ function write_config_files($options) {
 	$output .= 'define(\'DIR_LOGS\', \'' . DIR_OPENCART . 'system/logs/\');' . "\n\n";
 
 	$output .= '// DB' . "\n";
-	$output .= 'define(\'DB_DRIVER\', \'mysql\');' . "\n";
+	$output .= 'define(\'DB_DRIVER\', \'' . addslashes($options['db_driver']) . '\');' . "\n";
 	$output .= 'define(\'DB_HOSTNAME\', \'' . addslashes($options['db_host']) . '\');' . "\n";
 	$output .= 'define(\'DB_USERNAME\', \'' . addslashes($options['db_user']) . '\');' . "\n";
 	$output .= 'define(\'DB_PASSWORD\', \'' . addslashes($options['db_password']) . '\');' . "\n";
@@ -274,7 +278,7 @@ function write_config_files($options) {
 	$output .= 'define(\'DIR_CATALOG\', \'' . DIR_OPENCART . 'catalog/\');' . "\n\n";
 
 	$output .= '// DB' . "\n";
-	$output .= 'define(\'DB_DRIVER\', \'mysql\');' . "\n";
+	$output .= 'define(\'DB_DRIVER\', \'' . addslashes($options['db_driver']) . '\');' . "\n";
 	$output .= 'define(\'DB_HOSTNAME\', \'' . addslashes($options['db_host']) . '\');' . "\n";
 	$output .= 'define(\'DB_USERNAME\', \'' . addslashes($options['db_user']) . '\');' . "\n";
 	$output .= 'define(\'DB_PASSWORD\', \'' . addslashes($options['db_password']) . '\');' . "\n";
